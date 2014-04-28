@@ -1,7 +1,7 @@
 # IViny Scope
 =====
 
-https://github.com/ivmech/iviny-scope
+https://github.com/ivmech/iviny
 
 ![alt digital](https://raw.githubusercontent.com/ivmech/iviny/master/images/scope/01.png)
 
