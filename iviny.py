@@ -648,7 +648,7 @@ class IViny:
 
     def load_last_clicked(self, widget=None, event=None):
         for ch in range(len(self.data)):
-            self.last_data[ch] = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.data[ch]]
+            self.last_data[ch] = self.data[ch]
             if len(self.last_data[ch]) > 7:
                 self.load_last = True
                 self.sldx = 0
@@ -883,7 +883,7 @@ class IViny:
         c.select_font_face("Sans")
         c.set_font_size(12.0)
         c.set_source_rgba(*black)
-        newtime = self.time[self.sldx:self.sldx + self.a_width / self.step / 2]
+        newtime = self.time[self.sldx:self.sldx + self.a_width / self.step / 2 ]
 
         for i, s in enumerate(newtime):
             if i:
@@ -1012,7 +1012,8 @@ class IViny:
                 return np.transpose(np.array([peak_max, peak_min]))
 
             c = self.cairo
-            newdata = self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]
+            #newdata = self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]
+            newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]]
             ln = len(newdata)
             x = np.linspace(0, ln, ln)
             y = np.asarray(newdata)
