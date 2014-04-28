@@ -1,0 +1,31 @@
+{
+  "mainFile": "iviny.py", 
+  "use-tabs": false, 
+  "venv": "", 
+  "relatedProjects": [], 
+  "name": "Iviny Scope", 
+  "license": "GNU General Public License v3", 
+  "url": "", 
+  "pythonPath": "python", 
+  "preExecScript": "", 
+  "additional_builtins": [], 
+  "programParams": "", 
+  "indentation": 4, 
+  "PYTHONPATH": "", 
+  "supported-extensions": [
+    ".py", 
+    ".html", 
+    ".jpg", 
+    ".png", 
+    ".ui", 
+    ".css", 
+    ".json", 
+    ".js", 
+    ".ini", 
+    ".conf", 
+    ".txt"
+  ], 
+  "project-type": "Import from sources", 
+  "postExecScript": "", 
+  "description": ""
+}

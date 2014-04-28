@@ -1,0 +1,3 @@
+python-usb
+python-scipy
+xlsxwriter

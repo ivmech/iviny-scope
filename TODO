@@ -1,0 +1,10 @@
+[_.] Firmware update özelliği eklenecek,
+[_.] Firmware versiyon okuma özelliği eklenebilir, içerisinde hangi firmware olduğu öğrenilir,
+[ok] İki kanal için olan datalar ayrı ayrı listelerde tutulacak,
+[_.] Dosya içerisinde iki kanalın ve zamanın verileri virgülle ayrılarak kaydedilecek,
+[_.] Kapalı olan kanalın dosya içerisindeki verisi sayı verine "C" olacak,
+[_.] Renklerin seçimini conf dosyasında tutulacak,
+[_.] Saniyede alınacak veri sayısı hız ayarı olarak konulacak,
+[_.] Liste olarak tutulan datalar daha hızlı bir yapıya geçirilecek,
+
+[ok] Listeye yazma, grafik yenilemeden ayrı olacak şekilde thread olarak açılacak,
