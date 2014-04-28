@@ -109,6 +109,7 @@ LABEL_RUN = "RUN"
 LABEL_STOP = "STOP"
 ANALOG_DIGITAL = False
 
+
 class IViny:
 
     RUN_COLOR = "lightgreen"
@@ -210,9 +211,12 @@ class IViny:
 
         # Calistir butonu ve renklerinin olusturulmasi
         self.run_button = gtk.ToggleButton(LABEL_RUN)
-        self.run_button.modify_bg(gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.STOP_COLOR))
-        self.run_button.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.RUN_COLOR))
-        self.run_button.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.RUN_COLOR))
+        self.run_button.modify_bg(gtk.STATE_ACTIVE,
+            gtk.gdk.color_parse(self.STOP_COLOR))
+        self.run_button.modify_bg(gtk.STATE_NORMAL,
+            gtk.gdk.color_parse(self.RUN_COLOR))
+        self.run_button.modify_bg(gtk.STATE_PRELIGHT,
+            gtk.gdk.color_parse(self.RUN_COLOR))
 
         self.graph_hbox = gtk.HBox()
         self.check_save = gtk.CheckButton("Save File")
@@ -236,7 +240,8 @@ class IViny:
         self.graph_vbox.pack_start(self.graph_hbox)
 
         self.browse_hbox = gtk.HBox()
-        self.browse_hbox.pack_start(gtk.Label("Output Save File: "), False, False, 10)
+        self.browse_hbox.pack_start(gtk.Label("Output Save File: "),
+            False, False, 10)
         self.browse_entry = gtk.Entry()
         self.browse_entry.set_editable(False)
 
@@ -248,7 +253,8 @@ class IViny:
         self.settings_vbox.pack_start(self.browse_hbox, False, False, 10)
 
         self.max_save_hbox = gtk.HBox()
-        self.max_save_hbox.pack_start(gtk.Label("Max Save Time:    "), False, False, 10)
+        self.max_save_hbox.pack_start(gtk.Label("Max Save Time:    "),
+            False, False, 10)
         self.hour_adj = gtk.Adjustment(0, 0, 60, 1, 10, 0)
         self.hourspin = gtk.SpinButton(self.hour_adj)
         self.hourspin.set_value(int(self.config.get(CNAME, "max_hours")))
@@ -275,24 +281,27 @@ class IViny:
         self.range_combo = gtk.combo_box_new_text()
         for r in RANGES:
             self.range_combo.append_text(r)
-        self.range_combo.set_active(RANGES.index(self.config.get(CNAME, "y_axis").upper()))
+        self.range_combo.set_active(
+            RANGES.index(self.config.get(CNAME, "y_axis").upper())
+            )
         self.range_hbox.pack_start(self.range_combo, False, False, 10)
 
         self.settings_vbox.pack_start(self.range_hbox, False, False, 10)
 
-        #self.peak_threspin = gtk.SpinButton()
-        #self.peak_adj = gtk.Adjustment(0, 0, 1.0, 0.1, 0.2, 0)
-        #self.peak_threspin = gtk.SpinButton(self.peak_adj)
-        #self.peak_threspin.set_digits(2)
-        #self.peak_threspin.set_value(float(self.config.get(CNAME, "peak_threshold")))
-        #self.range_hbox.pack_start(gtk.VSeparator(), False, False, 10)
-        #self.range_hbox.pack_start(gtk.Label("Peak Threshold: "), False, False, 10)
-        #self.range_hbox.pack_start(self.peak_threspin, False, False, 10)
-        #self.peak_label = gtk.Label(self.config.get(CNAME, "y_axis").capitalize())
-        #self.range_hbox.pack_start(self.peak_label, False, False, 0)
+#self.peak_threspin = gtk.SpinButton()
+#self.peak_adj = gtk.Adjustment(0, 0, 1.0, 0.1, 0.2, 0)
+#self.peak_threspin = gtk.SpinButton(self.peak_adj)
+#self.peak_threspin.set_digits(2)
+#self.peak_threspin.set_value(float(self.config.get(CNAME, "peak_threshold")))
+#self.range_hbox.pack_start(gtk.VSeparator(), False, False, 10)
+#self.range_hbox.pack_start(gtk.Label("Peak Threshold: "), False, False, 10)
+#self.range_hbox.pack_start(self.peak_threspin, False, False, 10)
+#self.peak_label = gtk.Label(self.config.get(CNAME, "y_axis").capitalize())
+#self.range_hbox.pack_start(self.peak_label, False, False, 0)
 
         self.curve_hbox = gtk.HBox()
-        self.curve_hbox.pack_start(gtk.Label("Curve Algorithm: "), False, False, 10)
+        self.curve_hbox.pack_start(gtk.Label("Curve Algorithm: "),
+            False, False, 10)
         self.curve_combo = gtk.combo_box_new_text()
         for r in CURVES:
             self.curve_combo.append_text(r)
@@ -303,7 +312,8 @@ class IViny:
         self.curve_refreshspin = gtk.SpinButton(self.curve_refresh_adj)
         self.curve_refreshspin.set_value(self.refresh_rate)
         self.curve_hbox.pack_start(self.curve_combo, False, False, 10)
-        self.curve_hbox.pack_start(gtk.Label("Refresh Rate: "), False, False, 10)
+        self.curve_hbox.pack_start(gtk.Label("Refresh Rate: "),
+            False, False, 10)
         self.curve_hbox.pack_start(self.curve_refreshspin, False, False, 10)
         self.curve_hbox.pack_start(gtk.Label("Miliseconds"), False, False, 0)
 
@@ -390,10 +400,14 @@ class IViny:
         self.save_last_button.connect("clicked", self.browse_clicked)
         self.save_excel_button.connect("clicked", self.excel_clicked)
         self.load_area.connect("expose-event", self.load_redraw)
-        self.load_area.add_events(gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK | gtk.gdk.BUTTON1_MOTION_MASK)
         self.load_area.connect("motion_notify_event", self.load_area_motion)
         self.load_area.connect("button-press-event", self.load_area_pressed)
         self.load_area.connect("button-release-event", self.load_area_released)
+
+        self.load_area.add_events(
+            gtk.gdk.BUTTON_PRESS_MASK |
+            gtk.gdk.BUTTON_RELEASE_MASK |
+            gtk.gdk.BUTTON1_MOTION_MASK)
 
     def destroy(self, widget=None, data=None):
     # Pencerenin kapatilmasi
@@ -479,12 +493,14 @@ class IViny:
         if self.run_state:
             self.run_state = 0
             label = LABEL_RUN
-            widget.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.RUN_COLOR))
+            widget.modify_bg(gtk.STATE_PRELIGHT,
+                gtk.gdk.color_parse(self.RUN_COLOR))
             if self.check_save.get_active() and self.filename:
                 self.save_data_file()
             self.start_time = None
         else:
-            widget.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.STOP_COLOR))
+            widget.modify_bg(gtk.STATE_PRELIGHT,
+                gtk.gdk.color_parse(self.STOP_COLOR))
             label = LABEL_STOP
             if self.check_save.get_active():
                 if self.filename:
@@ -501,7 +517,8 @@ class IViny:
                             #self.run_state = 0
                             #label = LABEL_RUN
                             #self.start_time = None
-                            #widget.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse("lightgreen"))
+                            #widget.modify_bg(gtk.STATE_PRELIGHT,
+                            #    gtk.gdk.color_parse("lightgreen"))
                     else:
                         self.run_state = 1
                         self.start_time = time.time()
@@ -529,17 +546,26 @@ class IViny:
 
     def check_save_toggled(self, widget=None, event=None):
         if widget.get_active() and not self.filename:
-            self.browse_entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("lightyellow"))
+            self.browse_entry.modify_base(gtk.STATE_NORMAL,
+                gtk.gdk.color_parse("lightyellow"))
             self.notebook.set_current_page(3)
         else:
-            self.browse_entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("white"))
+            self.browse_entry.modify_base(gtk.STATE_NORMAL,
+                gtk.gdk.color_parse("white"))
 
     def browse_clicked(self, widget=None, event=None):
     #Kaydetmek icin dosya gosterilmesi
         filename = None
         ext = ".ivs"
-        file_chooser = gtk.FileChooserDialog(title="Save Scope File", action=gtk.FILE_CHOOSER_ACTION_SAVE,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        file_chooser = gtk.FileChooserDialog(
+            title="Save Scope File",
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL,
+                gtk.RESPONSE_CANCEL,
+                gtk.STOCK_SAVE,
+                gtk.RESPONSE_OK
+                )
+            )
 
         dialog_filter = gtk.FileFilter()
         dialog_filter.set_name("IViny Scope File")
@@ -566,7 +592,10 @@ class IViny:
             self.browse_entry.set_text(filename)
             self.filename = filename
             self.last_directory = os.path.split(filename)[0]
-            self.browse_entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("white"))
+            self.browse_entry.modify_base(
+                gtk.STATE_NORMAL,
+                gtk.gdk.color_parse("white")
+                )
             self.save_data_file()
             self.set_last_directory()
 
@@ -574,8 +603,15 @@ class IViny:
     #Kayitli dosya acilmasi
         filename = None
         ext = ".ivs"
-        file_chooser = gtk.FileChooserDialog(title="Select a File", action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        file_chooser = gtk.FileChooserDialog(
+            title="Select a File",
+            action=gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(gtk.STOCK_CANCEL,
+                gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OPEN,
+                gtk.RESPONSE_OK
+                )
+            )
 
         dialog_filter = gtk.FileFilter()
         dialog_filter.set_name("IViny Scope File")
@@ -617,8 +653,15 @@ class IViny:
     # Excel kaydetmek icin dosya gosterilmesi
         filename = None
         ext = ".xlsx"
-        file_chooser = gtk.FileChooserDialog(title="Save Excel File", action=gtk.FILE_CHOOSER_ACTION_SAVE,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        file_chooser = gtk.FileChooserDialog(
+            title="Save Excel File",
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL,
+                gtk.RESPONSE_CANCEL,
+                gtk.STOCK_SAVE,
+                gtk.RESPONSE_OK
+                )
+            )
 
         dialog_filter = gtk.FileFilter()
         dialog_filter.set_name("Excel File")
@@ -695,12 +738,18 @@ class IViny:
     #Ayarlarin onay butonu
         self.curve_algorithm = CURVES[self.curve_combo.get_active()].lower()
 
-        self.config.set(CNAME, "max_hours", int(self.hourspin.get_value()))
-        self.config.set(CNAME, "max_minutes", int(self.minutespin.get_value()))
-        self.config.set(CNAME, "max_seconds", int(self.secondspin.get_value()))
-        self.config.set(CNAME, "y_axis", RANGES[self.range_combo.get_active()].lower())
-        self.config.set(CNAME, "peak_threshold", self.peak_threspin.get_value())
-        self.config.set(CNAME, "curve_algorithm", self.curve_algorithm)
+        self.config.set(
+            CNAME, "max_hours", int(self.hourspin.get_value()))
+        self.config.set(
+            CNAME, "max_minutes", int(self.minutespin.get_value()))
+        self.config.set(
+            CNAME, "max_seconds", int(self.secondspin.get_value()))
+        self.config.set(
+            CNAME, "y_axis", RANGES[self.range_combo.get_active()].lower())
+        #self.config.set(
+        #    CNAME, "peak_threshold", self.peak_threspin.get_value())
+        self.config.set(
+            CNAME, "curve_algorithm", self.curve_algorithm)
 
         self.set_limit_time()
         #Ayar dosyasinin cagirilmasi (ilk kez "with" komutunu kullandigim yer :)
@@ -729,11 +778,14 @@ class IViny:
         self.posy = event.y
         mx, my = self.posx - self.old_posx, self.posy - self.old_posy
         self.sldx -= int(mx / self.step)
+        self.slide_load_area()
+
+    def slide_load_area(self):
         if self.sldx < 0:
             self.sldx = 0
             self.left_arrow = False
-        elif self.sldx > len(self.last_data[0]) - self.a_width / self.step / 2:
-            self.sldx = len(self.last_data[0]) - self.a_width / self.step / 2
+        elif self.sldx > len(self.last_data[0]) - self.a_width / self.step:
+            self.sldx = len(self.last_data[0]) - self.a_width / self.step
             self.right_arrow = False
         else:
             self.left_arrow = True
@@ -742,6 +794,14 @@ class IViny:
     def load_area_pressed(self, widget=None, event=None):
         self.old_posx = event.x
         self.old_posy = event.y
+
+        if event.x < self.v_gridres and self.left_arrow:
+            self.sldx -= 1
+
+        elif event.x > self.a_width - self.v_gridres:
+            self.sldx += 1
+
+        self.slide_load_area()
 
     def load_area_released(self, widget=None, event=None):
         pass
@@ -754,7 +814,8 @@ class IViny:
         self.limit_seconds = hours * 3600 + minutes * 60 + seconds
 
     def set_last_directory(self):
-        self.config.set(CNAME, "last_directory", self.last_directory)
+        self.config.set(
+            CNAME, "last_directory", self.last_directory)
         with open(CONF, 'wb') as cfile:
             self.config.write(cfile)
             cfile.close()
@@ -856,7 +917,8 @@ class IViny:
         gridstep = (self.a_height - (self.h_offset * 2)) / len(self.h_grids)
         for h in self.h_grids:
             c.move_to(0, self.h_offset + gridstep * h / self.h_gridres)
-            c.line_to(self.a_width, self.h_offset + gridstep * h / self.h_gridres)
+            c.line_to(
+                self.a_width, self.h_offset + gridstep * h / self.h_gridres)
             self.draw_axes(0, h)
         self.draw_axes(0, h + self.h_gridres)
         c.move_to(0, self.a_height - self.h_offset)
@@ -893,7 +955,7 @@ class IViny:
         c.select_font_face("Sans")
         c.set_font_size(12.0)
         c.set_source_rgba(*black)
-        newtime = self.time[self.sldx:self.sldx + self.a_width / self.step / 2 ]
+        newtime = self.time[self.sldx:self.sldx + self.a_width / self.step]
 
         for i, s in enumerate(newtime):
             if i:
@@ -908,8 +970,14 @@ class IViny:
 
         if self.right_arrow:
             c.move_to(self.a_width, self.a_height / 2)
-            c.line_to(self.a_width - self.v_gridres, self.a_height / 2 + self.v_gridres)
-            c.line_to(self.a_width - self.v_gridres, self.a_height / 2 - self.v_gridres)
+            c.line_to(
+                self.a_width - self.v_gridres,
+                self.a_height / 2 + self.v_gridres
+                )
+            c.line_to(
+                self.a_width - self.v_gridres,
+                self.a_height / 2 - self.v_gridres
+                )
             c.line_to(self.a_width, self.a_height / 2)
 
             c.fill()
@@ -941,10 +1009,16 @@ class IViny:
                 else:
                     nd = newdata
                 for y in nd:
-                    c.move_to(self.x + xmin * (-1), self.a_height - self.h_offset - self.y)
+                    c.move_to(
+                        self.x + xmin * (-1),
+                        self.a_height - self.h_offset - self.y
+                        )
                     self.x = self.x + 1        # self.step
                     self.y = y
-                    c.line_to(self.x + xmin * (-1), self.a_height - self.h_offset - self.y)
+                    c.line_to(
+                        self.x + xmin * (-1),
+                        self.a_height - self.h_offset - self.y
+                        )
                 self.x = xmin
                 dash = [1.0, 0.0]
                 c.set_dash(dash)
@@ -1024,13 +1098,13 @@ class IViny:
         for ch in range(len(self.last_data)):
             if len(self.last_data[ch]):
                 c = self.cairo
-                newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]]
+                newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step]]
                 ln = len(newdata)
                 x = np.linspace(0, ln, ln)
                 y = np.asarray(newdata)
                 algorithm = CURVES[self.curve_combo.get_active()].lower()
                 f = interp1d(x, y, kind=self.curve_algorithm)
-                xnew = np.linspace(0, ln, ln * self.step * 2)
+                xnew = np.linspace(0, ln, ln * self.step)
                 nd = f(xnew).tolist()
                 x = 0
                 for y in nd:
@@ -1060,26 +1134,40 @@ class IViny:
         chart = self.wb.add_chart({'type': 'line'})
         chart.add_series(
         {
-        'categories': '=%s!$B$1:$B$%d' % (NAME, self.xls_x + 1),            # X ekseni uzerindeki zaman degerleri
-        'values': '=%s!$A$1:$A$%d' % (NAME, self.xls_x + 1),                # Y ekseni uzerindeki akim degerleri
+        # X ekseni uzerindeki zaman degerleri
+        'categories': '=%s!$B$1:$B$%d' % (NAME, self.xls_x + 1),
+        # Y ekseni uzerindeki akim degerleri
+        'values': '=%s!$A$1:$A$%d' % (NAME, self.xls_x + 1),
         'smooth': True,
         'line': {'width': 1.5},
         })
         chart.set_title({'name': NAME})
         chart.set_x_axis({'name': 'TIME (s)'})
         if self.range_combo.get_active() == 0:
-            chart.set_y_axis({'name': 'MILIVOLTAGE (mV)', 'min': 0, 'max': VOLTAGE * 1000 / SCALE})
+            chart.set_y_axis({
+                    'name': 'MILIVOLTAGE (mV)',
+                    'min': 0,
+                    'max': VOLTAGE * 1000 / SCALE
+                    })
         elif self.range_combo.get_active() == 1:
-            chart.set_y_axis({'name': 'VOLTAGE (V)', 'min': 0, 'max': VOLTAGE / SCALE})
+            chart.set_y_axis({
+                    'name': 'VOLTAGE (V)',
+                    'min': 0,
+                    'max': VOLTAGE / SCALE
+                    })
 #        elif self.range_combo.get_active() == 2:
 #            chart.set_y_axis({'name': 'ABSORBANCE (%)', 'min': 0, 'max': 100})
         chart.set_size({'width': 800, 'height': 600})
         self.ws.insert_chart('D1', chart)
 
     def dialog_file_rename(self):
-        qd = gtk.MessageDialog(self.mainwindow,
-        gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION,
-        gtk.BUTTONS_OK_CANCEL, "There exists scope file already. Do you want to overwrite on it?")
+        qd = gtk.MessageDialog(
+            self.mainwindow,
+            gtk.DIALOG_MODAL,
+            gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_OK_CANCEL,
+            "There exists scope file already. Do you want to overwrite on it?"
+            )
         response = qd.run()
         qd.destroy()
         return response
@@ -1115,6 +1203,7 @@ class Analog(gtk.VBox):
         "#D2691E",          # chocolate
         "#8B4513",          # saddlebrown
         ]
+
     def __init__(self, CHANNEL=0):
 
         super(Analog, self).__init__()
@@ -1155,9 +1244,12 @@ class Analog(gtk.VBox):
 
         self.color_button_changed()
 
-        self.state_button.modify_bg(gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.OFF_COLOR))
-        self.state_button.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.ON_COLOR))
-        self.state_button.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.ON_COLOR))
+        self.state_button.modify_bg(
+            gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.OFF_COLOR))
+        self.state_button.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(self.ON_COLOR))
+        self.state_button.modify_bg(
+            gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.ON_COLOR))
 
         self.pack_start(self.name_label, False, False, 10)
         if ANALOG_DIGITAL:
@@ -1246,9 +1338,12 @@ class Analog(gtk.VBox):
                 name = self.COLORS[j + column * i]
                 color_button = gtk.ToggleButton()
                 color_button.set_size_request(100, 50)
-                color_button.modify_bg(gtk.STATE_ACTIVE, gtk.gdk.color_parse(name))
-                color_button.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(name))
-                color_button.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(name))
+                color_button.modify_bg(
+                    gtk.STATE_ACTIVE, gtk.gdk.color_parse(name))
+                color_button.modify_bg(
+                    gtk.STATE_NORMAL, gtk.gdk.color_parse(name))
+                color_button.modify_bg(
+                    gtk.STATE_PRELIGHT, gtk.gdk.color_parse(name))
                 color_button.connect("toggled", self.color_toggled)
                 self.color_buttons.append(color_button)
                 table.attach(color_button, j, j + 1, i, i + 1)
@@ -1262,8 +1357,10 @@ class Analog(gtk.VBox):
         self.new_colorbox.add(gtk.Label("NEW"))
         color_dialog.vbox.pack_start(self.old_colorbox, False, False, 0)
         color_dialog.vbox.pack_start(self.new_colorbox, False, False, 0)
-        self.old_colorbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.color))
-        self.new_colorbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.color))
+        self.old_colorbox.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(self.color))
+        self.new_colorbox.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(self.color))
 
         color_dialog.vbox.show_all()
 
@@ -1289,12 +1386,16 @@ class Analog(gtk.VBox):
                     button.set_active(True)
                     color = self.COLORS[i]
                     self.new_color = color
-            self.new_colorbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(color))
+            self.new_colorbox.modify_bg(
+                gtk.STATE_NORMAL, gtk.gdk.color_parse(color))
 
     def color_button_changed(self):
-        self.color_button.modify_bg(gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.color))
-        self.color_button.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.color))
-        self.color_button.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.color))
+        self.color_button.modify_bg(
+            gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.color))
+        self.color_button.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(self.color))
+        self.color_button.modify_bg(
+            gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.color))
 
         #for i, button in enumerate(self.color_buttons):
             #if button == widget:
@@ -1303,7 +1404,7 @@ class Analog(gtk.VBox):
     def get_line_color(self):
         hex_color = str(gtk.gdk.color_parse(self.color))
         #return red[:3] # Son hata icin bypass
-        return tuple(map(lambda s: int(s, 16)/255.0,
+        return tuple(map(lambda s: int(s, 16) / 255.0,
                      (hex_color[1:3], hex_color[3:5], hex_color[5:7])))
 
 DIGITAL_BUTTON_SIZE = (30, 50)
@@ -1334,13 +1435,19 @@ class Digital(gtk.VBox):
         self.state_label = gtk.Label()
         self.state_labelbox.add(self.state_label)
 
-        self.direction_button.modify_bg(gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.OUT_COLOR))
-        self.direction_button.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.IN_COLOR))
-        self.direction_button.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.IN_COLOR))
+        self.direction_button.modify_bg(
+            gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.OUT_COLOR))
+        self.direction_button.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(self.IN_COLOR))
+        self.direction_button.modify_bg(
+            gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.IN_COLOR))
 
-        self.state_button.modify_bg(gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.HIGH_COLOR))
-        self.state_button.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.LOW_COLOR))
-        self.state_button.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.LOW_COLOR))
+        self.state_button.modify_bg(
+            gtk.STATE_ACTIVE, gtk.gdk.color_parse(self.HIGH_COLOR))
+        self.state_button.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(self.LOW_COLOR))
+        self.state_button.modify_bg(
+            gtk.STATE_PRELIGHT, gtk.gdk.color_parse(self.LOW_COLOR))
 
         if LABEL:
             self.pack_start(self.name_label, False, False, 10)
@@ -1389,7 +1496,8 @@ class Digital(gtk.VBox):
             state = "HIGH"
             color = self.HIGH_COLOR
 
-        widget.modify_bg(gtk.STATE_PRELIGHT, gtk.gdk.color_parse(color))
+        widget.modify_bg(
+            gtk.STATE_PRELIGHT, gtk.gdk.color_parse(color))
         widget.set_label(state)
 
     def set_state(self, state):
@@ -1401,8 +1509,10 @@ class Digital(gtk.VBox):
             self.state_value = 0
             state_text = "LOW"
             color = self.LOW_COLOR
-        self.state_labelbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(color))
-        self.state_label.set_markup("<big><big><big>" + state_text + "</big></big></big>")
+        self.state_labelbox.modify_bg(
+            gtk.STATE_NORMAL, gtk.gdk.color_parse(color))
+        self.state_label.set_markup(
+            "<big><big><big>" + state_text + "</big></big></big>")
 
     def set_iviny(self, IVINY):
         self.iviny = IVINY
