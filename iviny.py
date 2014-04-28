@@ -525,6 +525,7 @@ class IViny:
             self.elapsed_time = 0
             self.start_time = None
             self.load_last = False
+            self.set_analog_sensitive(True)
 
     def check_save_toggled(self, widget=None, event=None):
         if widget.get_active() and not self.filename:
@@ -598,8 +599,9 @@ class IViny:
             self.last_directory = os.path.split(filename)[0]
             lines = data.readlines()
             self.time = [float(x.strip().split(",")[0]) for x in lines]
-            self.last_data[0] = [float(x.strip().split(",")[1]) for x in lines]
-            self.last_data[1] = [float(x.strip().split(",")[2]) for x in lines]
+            for ch in range(len(self.data)):
+                temp_data = [x.strip().split(",")[ch + 1] for x in lines]
+                self.last_data[ch] = [float(x) for x in temp_data if not x == "C"]
 
             if len(self.last_data[0]) > 7:
                 self.load_last = True
@@ -757,9 +759,14 @@ class IViny:
             self.config.write(cfile)
             cfile.close()
 
+    def set_analog_sensitive(self, state):
+        for i, a in enumerate(self.analogs):
+            a.get_widget().state_button.set_sensitive(state)
+
     def set_sensitives(self):
         if self.run_state:
             state = False
+            self.set_analog_sensitive(state)
         else:
             state = True
 
@@ -917,32 +924,33 @@ class IViny:
 
     def draw_graph_slide(self):
     # Kayan grafik olusuturlmasi
-        for ch in range(len(self.data)):
-            c = self.cairo
-            xmax = len(self.data[ch]) if len(self.data[ch]) > self.a_width / self.step else self.a_width / self.step
-            xmin = self.a_width / self.step - xmax
+        for ch, a in enumerate(self.analogs):
+            if a.get_state():
+                c = self.cairo
+                xmax = len(self.data[ch]) if len(self.data[ch]) > self.a_width / self.step else self.a_width / self.step
+                xmin = self.a_width / self.step - xmax
 
-            newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.data[ch][xmin * (-1):]]
-            ln = len(newdata)
-            if ln > 7:
-                x = np.linspace(0, ln, ln)
-                y = np.asarray(newdata)
-                f = interp1d(x, y, kind=self.curve_algorithm)
-                xnew = np.linspace(0, ln, ln * self.step)
-                nd = f(xnew).tolist()
-            else:
-                nd = newdata
-            for y in nd:
-                c.move_to(self.x + xmin * (-1), self.a_height - self.h_offset - self.y)
-                self.x = self.x + 1        # self.step
-                self.y = y
-                c.line_to(self.x + xmin * (-1), self.a_height - self.h_offset - self.y)
-            self.x = xmin
-            dash = [1.0, 0.0]
-            c.set_dash(dash)
-            color = self.analogs[ch].get_line_color()
-            c.set_source_rgb(*color)
-            c.stroke()
+                newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.data[ch][xmin * (-1):]]
+                ln = len(newdata)
+                if ln > 7:
+                    x = np.linspace(0, ln, ln)
+                    y = np.asarray(newdata)
+                    f = interp1d(x, y, kind=self.curve_algorithm)
+                    xnew = np.linspace(0, ln, ln * self.step)
+                    nd = f(xnew).tolist()
+                else:
+                    nd = newdata
+                for y in nd:
+                    c.move_to(self.x + xmin * (-1), self.a_height - self.h_offset - self.y)
+                    self.x = self.x + 1        # self.step
+                    self.y = y
+                    c.line_to(self.x + xmin * (-1), self.a_height - self.h_offset - self.y)
+                self.x = xmin
+                dash = [1.0, 0.0]
+                c.set_dash(dash)
+                color = self.analogs[ch].get_line_color()
+                c.set_source_rgb(*color)
+                c.stroke()
 
     def get_value(self):
     # Analog ceviricinin cozunurlugundeki degerleri pixel'e cevirilmesi
@@ -950,7 +958,6 @@ class IViny:
             if self.run_state:
                 try:
                     self.iviny.write(ord("1"))
-                    #self.iviny.write(ord("\n"))
                     data = self.iviny.read()
 
                     data = "".join([chr(x) for x in data if x != 255])
@@ -961,17 +968,16 @@ class IViny:
                         else:
                             analogs = data
                         if "," in analogs:
-                            analog1, analog2 = [int(a) for a in analogs.split(",") if int(a) < 2 ** RESOLUTION]
 
-                            value1 = analog1 * VOLTAGE / (2 ** RESOLUTION)
-                            value2 = analog2 * VOLTAGE / (2 ** RESOLUTION)
-            #                value = int(analog * VOLTAGE / (2 ** RESOLUTION) * (self.a_height / VOLTAGE))\
-            #                    * SCALE  - self.h_offset * 2 if analog < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2
-                            #value = analog / 53.6842
+                            analogvalues = [int(a) for a in analogs.split(",") if int(a) < 2 ** RESOLUTION]
+
+                            for i, a in enumerate(self.analogs):
+                                if a.get_state():
+                                    self.data[i].append(analogvalues[i] * VOLTAGE / (2 ** RESOLUTION))
+                                else:
+                                    self.data[i].append("C")
                             self.elapsed_time = time.time() - self.start_time
                             self.time.append(self.elapsed_time)
-                            self.data[0].append(value1)
-                            self.data[1].append(value2)
                     self.data_error = 0
                 except:
                     #self.get_value()
@@ -1008,37 +1014,37 @@ class IViny:
 
     def draw_load_graph(self):
     # Duran grafik olusuturlmasi
+        def peaks(data, step):
+            n = len(data) - len(data) % step
+            slices = [data[i:n:step] for i in range(step)]
+            peak_max = reduce(np.maximum, slices)
+            peak_min = reduce(np.minimum, slices)
+            return np.transpose(np.array([peak_max, peak_min]))
+
         for ch in range(len(self.last_data)):
-            def peaks(data, step):
-                n = len(data) - len(data) % step
-                slices = [data[i:n:step] for i in range(step)]
-                peak_max = reduce(np.maximum, slices)
-                peak_min = reduce(np.minimum, slices)
-                return np.transpose(np.array([peak_max, peak_min]))
+            if len(self.last_data[ch]):
+                c = self.cairo
+                newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]]
+                ln = len(newdata)
+                x = np.linspace(0, ln, ln)
+                y = np.asarray(newdata)
+                algorithm = CURVES[self.curve_combo.get_active()].lower()
+                f = interp1d(x, y, kind=self.curve_algorithm)
+                xnew = np.linspace(0, ln, ln * self.step * 2)
+                nd = f(xnew).tolist()
+                x = 0
+                for y in nd:
+                    c.move_to(x, self.a_height - self.h_offset - y)
+                    x += 1
+                    c.line_to(x, self.a_height - self.h_offset - y)
 
-            c = self.cairo
-            #newdata = self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]
-            newdata = [int(x * (self.a_height / VOLTAGE)) * SCALE + self.h_offset if x < (2 ** RESOLUTION) else self.a_height - self.h_offset * 2 for x in self.last_data[ch][self.sldx:self.sldx + self.a_width / self.step / 2]]
-            ln = len(newdata)
-            x = np.linspace(0, ln, ln)
-            y = np.asarray(newdata)
-            algorithm = CURVES[self.curve_combo.get_active()].lower()
-            f = interp1d(x, y, kind=self.curve_algorithm)
-            xnew = np.linspace(0, ln, ln * self.step * 2)
-            nd = f(xnew).tolist()
-            x = 0
-            for y in nd:
-                c.move_to(x, self.a_height - self.h_offset - y)
-                x += 1
-                c.line_to(x, self.a_height - self.h_offset - y)
-
-            #self.sldx += self.step     # Kayan
-            dash = [1.0, 0.0]
-            c.set_dash(dash)
-            color = self.analogs[ch].get_line_color()
-            c.set_source_rgba(*color)
-            c.set_line_width(5)
-            c.stroke()
+                #self.sldx += self.step     # Kayan
+                dash = [1.0, 0.0]
+                c.set_dash(dash)
+                color = self.analogs[ch].get_line_color()
+                c.set_source_rgba(*color)
+                c.set_line_width(5)
+                c.stroke()
 
             self.draw_time()
 
@@ -1214,6 +1220,9 @@ class Analog(gtk.VBox):
 
     def get_widget(self):
         return self
+
+    def get_state(self):
+        return self.state_value
 
     def set_value(self, value):
         self.value = value
