@@ -123,6 +123,8 @@ class IViny:
         self.analogs = []
         self.digitals = []
 
+        self.data_error = 0
+
         # Ayar dosyasi
         self.config = ConfigParser.RawConfigParser()
         self.config.read(CONF)
@@ -443,7 +445,8 @@ class IViny:
                     for d in self.digitals:
                         d.set_iviny(self.iviny)
             else:
-                self.iviny_check()
+                if self.data_error > 20:
+                    self.iviny_check()
 
         except:
             # IViny BAGLI DEGIL ise yapilacaklar
@@ -454,9 +457,9 @@ class IViny:
             self.run_button.hide()
             self.gpio_vbox.set_sensitive(False)
 
-        if self.iviny:
-            return False
-        print "checked"
+        #if self.iviny:
+        #    return False
+        #print "checked"
         return True
 
     def iviny_check(self):
@@ -969,8 +972,10 @@ class IViny:
                             self.time.append(self.elapsed_time)
                             self.data[0].append(value1)
                             self.data[1].append(value2)
+                    self.data_error = 0
                 except:
-                    self.get_value()
+                    #self.get_value()
+                    self.data_error += 1
                     pass
 
             else:
