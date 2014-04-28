@@ -22,8 +22,9 @@ while True:
     if iviny:
         iviny.write(ord("1"))
         data=iviny.read()
-        print data
-#        print "".join([chr(x) for x in data if x != 255])
+        #DEBUG
+        #print data
+        print "".join([chr(x) for x in data if x != 255])
 
         iviny.write(ord("H"))
         iviny.write(ord("A"))

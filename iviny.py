@@ -1259,8 +1259,8 @@ class Analog(gtk.VBox):
 
         self.setting_hbox = gtk.HBox()
 
-        self.setting_hbox.pack_start(gtk.Label("Volt"), False, False, 5)
-        self.setting_hbox.pack_start(self.scale_spin, True, True, 5)
+        #self.setting_hbox.pack_start(gtk.Label("Volt"), False, False, 5)
+        #self.setting_hbox.pack_start(self.scale_spin, True, True, 5)
         self.setting_hbox.pack_start(gtk.Label("Color"), False, False, 5)
         self.setting_hbox.pack_start(self.color_button, True, True, 5)
 
