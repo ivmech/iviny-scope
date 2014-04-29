@@ -126,6 +126,7 @@ class IViny:
         self.digitals = []
 
         self.data_error = 0
+        self.update_value_delay = 0.04
 
         # Ayar dosyasi
         self.config = ConfigParser.RawConfigParser()
@@ -380,7 +381,7 @@ class IViny:
 
         self.update_stopped = threading.Event()
         self.update_value_thread = threading.Thread(
-            target=self.update_value, args=(0.000001,))
+            target=self.update_value)
         self.update_value_thread.start()
         #gobject.timeout_add(15, self.update_value)
         if not DEBUG:
@@ -765,21 +766,25 @@ class IViny:
             self.config.write(cfile)
             cfile.close()
 
-    def notebook_changed(self, widget=None, event=None, data=None):
+    def notebook_changed(self, widget=None, event=None, page=None):
     #Tablarin degistirlmesi
-        return
+        if page == 1:
+            self.update_value_delay = 0.00001
+        else:
+            self.update_value_delay = 0.04
+        #return
         #print widget.get_current_page(), data
         #self.load_last = False
-        old_page = widget.get_current_page()
-        md = gtk.MessageDialog(self.mainwindow,
-        gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION,
-        gtk.BUTTONS_OK_CANCEL, "Are you sure to leave graph?")
-        response = md.run()
-        md.destroy()
-        if response == gtk.RESPONSE_CANCEL:
-            pass
-        elif response == gtk.RESPONSE_OK:
-            widget.set_current_page(data)
+        #old_page = widget.get_current_page()
+        #md = gtk.MessageDialog(self.mainwindow,
+        #gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION,
+        #gtk.BUTTONS_OK_CANCEL, "Are you sure to leave graph?")
+        #response = md.run()
+        #md.destroy()
+        #if response == gtk.RESPONSE_CANCEL:
+        #    pass
+        #elif response == gtk.RESPONSE_OK:
+        #    widget.set_current_page(data)
 
     def load_area_motion(self, widget=None, event=None):
         self.posx = event.x
@@ -861,10 +866,10 @@ class IViny:
             label += remain_time
             self.run_button.set_label(label)
 
-    def update_value(self, delay):
-        while not self.update_stopped.wait(delay):
+    def update_value(self):
+        while not self.update_stopped.wait(self.update_value_delay):
             self.get_value()
-            time.sleep(delay)
+            time.sleep(self.update_value_delay)
 
     def update(self):
     # Threading fonksiyonu (Gorsel Arayuz)
