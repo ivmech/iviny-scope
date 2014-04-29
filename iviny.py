@@ -33,6 +33,7 @@ import time
 import random
 import ConfigParser
 import numpy as np
+import threading
 
 from scipy.interpolate import interp1d
 from datetime import datetime
@@ -374,8 +375,14 @@ class IViny:
             self.run_button.hide()
 
         # Threading'ler, self.check threading'i IViny'e baglanabilir
-        gobject.timeout_add(70, self.update)
-        gobject.timeout_add(30, self.update_value)
+        gobject.timeout_add(50, self.update)
+        #gobject.timeout_add(15, self.update_value)
+
+        self.update_stopped = threading.Event()
+        self.update_value_thread = threading.Thread(
+            target=self.update_value, args=(0.000001,))
+        self.update_value_thread.start()
+        #gobject.timeout_add(15, self.update_value)
         if not DEBUG:
             gobject.timeout_add(500, self.check)
 
@@ -417,6 +424,7 @@ class IViny:
         md.set_default_response(gtk.RESPONSE_NO)
         response = md.run()
         if response == gtk.RESPONSE_YES:
+            self.update_stopped.set()
             gtk.main_quit()
         else:
             md.destroy()
@@ -853,9 +861,10 @@ class IViny:
             label += remain_time
             self.run_button.set_label(label)
 
-    def update_value(self):
-        self.get_value()
-        return True
+    def update_value(self, delay):
+        while not self.update_stopped.wait(delay):
+            self.get_value()
+            time.sleep(delay)
 
     def update(self):
     # Threading fonksiyonu (Gorsel Arayuz)
@@ -1556,4 +1565,5 @@ def set_proc_name(newname):
 if __name__ == "__main__":
     set_proc_name(NAME)
     app = IViny()
+    gobject.threads_init()
     app.main()
