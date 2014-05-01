@@ -126,7 +126,7 @@ class IViny:
         self.digitals = []
 
         self.data_error = 0
-        self.update_value_delay = 0.04
+        self.update_value_delay = 0.1
 
         # Ayar dosyasi
         self.config = ConfigParser.RawConfigParser()
@@ -771,7 +771,7 @@ class IViny:
         if page == 1:
             self.update_value_delay = 0.00001
         else:
-            self.update_value_delay = 0.04
+            self.update_value_delay = 0.1
         #return
         #print widget.get_current_page(), data
         #self.load_last = False

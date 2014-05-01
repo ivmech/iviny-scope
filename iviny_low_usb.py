@@ -35,7 +35,7 @@ while elapsed_time < 2:
         analog1 = analogs.split(",")[0]
         data_list.append(analog1)
 
-    time.sleep(0.000001)
+    time.sleep(0.01)
 
 savefile = open(os.path.join(PATH, "test.ivs"), "w")
 write = list(zip(time_list, data_list))
